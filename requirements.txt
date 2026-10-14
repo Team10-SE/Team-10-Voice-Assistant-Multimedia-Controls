@@ -1,0 +1,3 @@
+# Hemant-owned dependencies for T10VA-5 (Audio/VLC Environment) and T10VA-6 (Media Controller)
+python-vlc>=3.0.20123
+pytest>=7.0.0
