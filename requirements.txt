@@ -1,0 +1,5 @@
+# Core integration foundation uses Python standard-library modules.
+pytest>=7.0.0
+
+# Multimedia and audio controller dependencies (T10VA-5, T10VA-6)
+python-vlc>=3.0.20123
