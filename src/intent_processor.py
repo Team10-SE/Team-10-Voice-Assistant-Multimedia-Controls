@@ -65,6 +65,8 @@ PHRASE_MAP = {
     "turn it up": "VOLUME_UP",
     "louder": "VOLUME_UP",
     "make it louder": "VOLUME_UP",
+    "full volume": "VOLUME_UP",
+    "max volume": "VOLUME_UP",
     "volume down": "VOLUME_DOWN",
     "decrease volume": "VOLUME_DOWN",
     "turn volume down": "VOLUME_DOWN",
@@ -73,6 +75,7 @@ PHRASE_MAP = {
     "softer": "VOLUME_DOWN",
     "quieter": "VOLUME_DOWN",
     "make it quieter": "VOLUME_DOWN",
+    "minimum volume": "VOLUME_DOWN",
 
     # Mute
     "mute": "MUTE",
@@ -81,6 +84,7 @@ PHRASE_MAP = {
     "unmute": "MUTE",
     "unmute audio": "MUTE",
     "unmute the sound": "MUTE",
+    "sound on": "MUTE",
 }
 
 POLITE_PREFIXES = (

@@ -133,6 +133,23 @@ class MediaController:
             "is_playing": self.is_playing(),
         }
 
+    def get_playlist_summary(self) -> dict[str, Any]:
+        """Return a structured summary of the playlist and current position.
+
+        `has_next` / `has_previous` ignore wrap-around: they report whether a
+        track exists strictly after / before the current one.
+        """
+        total = len(self._media_files)
+        return {
+            "total_tracks": total,
+            "current_index": self._current_index,
+            "current_track": self.get_current_track(),
+            "tracks": list(self._media_files),
+            "has_next": self._current_index < total - 1,
+            "has_previous": 0 < self._current_index < total,
+            "is_empty": total == 0,
+        }
+
     def execute(self, intent: str) -> dict[str, Any]:
         """Execute a normalized multimedia intent.
 

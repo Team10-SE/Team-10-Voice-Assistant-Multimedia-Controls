@@ -663,3 +663,66 @@ def test_get_playback_state_reflects_runtime_changes(controller):
     assert state["current_track"] == controller.media_files[1]
 
 
+
+
+# =========================================================================
+# Playlist summary diagnostics
+# =========================================================================
+
+
+def test_get_playlist_summary_empty_playlist():
+    """Empty playlist reports no track and no navigation."""
+    ctrl = MediaController(media_files=[], vlc_instance=None, player=None)
+    summary = ctrl.get_playlist_summary()
+
+    assert summary["is_empty"] is True
+    assert summary["total_tracks"] == 0
+    assert summary["current_index"] == 0
+    assert summary["current_track"] is None
+    assert summary["tracks"] == []
+    assert summary["has_next"] is False
+    assert summary["has_previous"] is False
+
+
+@pytest.mark.parametrize(
+    ("index", "has_next", "has_previous"),
+    [(0, True, False), (1, True, True), (2, False, True)],
+    ids=["first", "middle", "last"],
+)
+def test_get_playlist_summary_position_edges(mock_files, index, has_next, has_previous):
+    """has_next/has_previous never wrap around at playlist boundaries."""
+    ctrl = MediaController(
+        media_files=mock_files[:3],
+        vlc_instance=FakeVLCInstance(),
+        player=FakeVLCPlayer(),
+    )
+    ctrl._current_index = index
+    summary = ctrl.get_playlist_summary()
+
+    assert summary["is_empty"] is False
+    assert summary["total_tracks"] == 3
+    assert summary["current_index"] == index
+    assert summary["current_track"] == ctrl.media_files[index]
+    assert summary["tracks"] == ctrl.media_files
+    assert summary["has_next"] is has_next
+    assert summary["has_previous"] is has_previous
+
+
+def test_get_playlist_summary_tracks_is_a_copy(controller):
+    """Mutating the returned list must not alter the playlist."""
+    controller.get_playlist_summary()["tracks"].clear()
+    assert controller.media_files
+
+
+def test_execute_shields_unexpected_handler_exception(controller, monkeypatch):
+    """An unexpected handler error yields a generic status, not a raised exception."""
+
+    def boom():
+        raise RuntimeError("internal vlc failure")
+
+    monkeypatch.setattr(controller, "play", boom)
+    result = controller.execute("PLAY")
+
+    assert result["success"] is False
+    assert result["status"] == "An unexpected media player error occurred."
+    assert "internal vlc failure" not in result["status"]
